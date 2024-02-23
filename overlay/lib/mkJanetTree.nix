@@ -31,6 +31,10 @@ stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out/bin
     cp -r jpm_tree $out/
+    for file in $out/jpm_tree/bin/*; do
+      substituteInPlace $file --replace $(pwd)/jpm_tree $out/jpm_tree
+      cp $file $out/bin
+    done
     cp janet $out/bin
     cp jpm $out/bin
 
