@@ -5,11 +5,9 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
     let 
-      package_overlay = import ./overlay/packages.nix;
       function_overlay = import ./overlay/functions.nix;
       extra_packages = import ./overlay/extra-packages.nix;
       pkgs = import nixpkgs { inherit system; overlays = [ 
-        package_overlay
         function_overlay
         extra_packages
       ]; };
@@ -24,7 +22,6 @@
       };
     in {
       overlays = [
-        package_overlay
         function_overlay
         extra_packages
       ];
