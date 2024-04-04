@@ -1,7 +1,7 @@
 {
   lib,
   fetchgit,
-  stdenv,
+  stdenvNoCC,
   pkgs,
   name,
   url,
@@ -13,7 +13,7 @@
   manualTag ? "v1"
 }:
 {
-  package = stdenv.mkDerivation {
+  package = stdenvNoCC.mkDerivation {
     name = name;
     nativeBuildInputs = [
       pkgs.git
