@@ -21,5 +21,20 @@ final: prev: {
       hash = "sha256-kC+HPtpnGOGGt6Msqk36znGMpZmy89DRzx9/TZdF8vg=";
       rev = "d73057161a8d10f27b20e69f0c1e2ceb3e145f97";
     };
+    cmd = prev.mkJanetPackage {
+      name = "cmd";
+      url = "https://github.com/ianthehenry/cmd";
+      rev = "b4308de361d0f90dd96cc0f9a8dc6881e0e851c6";
+      manualTag = "v1.1.0";
+    };
+    judge = prev.mkJanetPackage {
+      name = "judge";
+      url = "https://github.com/ianthehenry/judge";
+      rev = "a9db4af561f2bdcdc8dada35db7d8e8453262318";
+      manualTag = "v2.4.0";
+      withJanetPackages = [
+        final.janetPackages.cmd
+      ];
+    };
   };
 }
