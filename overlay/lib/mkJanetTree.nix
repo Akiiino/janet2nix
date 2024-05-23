@@ -40,6 +40,6 @@ stdenv.mkDerivation {
 
     wrapProgram $out/bin/janet \
         --prefix JANET_PATH : $out/jpm_tree/lib
-    wrapProgram $out/bin/jpm --add-flags "--tree=$out/jpm_tree --headerpath=${pkgs.janet}/include --libpath=${pkgs.janet}/lib --ldflags=-L${pkgs.glibc}/lib ";
+    wrapProgram $out/bin/jpm --add-flags "--tree=$out/jpm_tree --headerpath=${pkgs.janet}/include --libpath=${pkgs.janet}/lib";
   '';
 }
