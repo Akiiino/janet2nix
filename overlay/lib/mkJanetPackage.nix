@@ -27,7 +27,7 @@
     buildPhase = ''
       set -o xtrace
       cat project.janet
-    ${lib.strings.concatMapStrings (x: lib.strings.concatStrings ["sed -i s#" (lib.strings.escapeShellArg x.url) "#file://" (lib.strings.escapeShellArg x.package) "#g project.janet\n" ]) withJanetPackages}
+    ${lib.strings.concatMapStrings (x: lib.strings.concatStrings ["sed -E -i 's#" (lib.strings.escapeShellArg x.url) "(.git)?#file://" (lib.strings.escapeShellArg x.package) "#g' project.janet\n" ]) withJanetPackages}
       git init
       git add .
       git -c user.name='nix' -c user.email='nix@nix' commit -m "dummy commit"
