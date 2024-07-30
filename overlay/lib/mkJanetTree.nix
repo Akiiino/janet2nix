@@ -17,7 +17,11 @@ stdenv.mkDerivation {
   unpackPhase = "true";
   buildPhase = ''
     set -o xtrace
-    ${lib.strings.concatMapStrings (x: lib.strings.concatStrings ["jpm -l install file://" (toString x.package) "/\n" ]) withJanetPackages}
+    HOME=$(mktemp -d)  # Needed for the git config command below to work.
+    ${lib.strings.concatMapStrings (x: lib.strings.concatStrings [
+      "git config --global --add safe.directory " (toString x.package) "/.git\n"
+      "jpm -l install file://" (toString x.package) "/\n"
+    ]) withJanetPackages}
 
     echo '#!/bin/sh' > janet
     echo '${pkgs.janet}/bin/janet "$@"' >> janet
