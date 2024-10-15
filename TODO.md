@@ -1,0 +1,2 @@
+- mkJanetPackage has no way to export its withJanetPackages argument.  As a result, callers have to collect dependencies manually.
+- Is there some way to for mkJanetPackage to refer to the revision of the git repo its running in?
