@@ -36,7 +36,6 @@
             name="janet2nix-dev";
             withJanetPackages = [
               pkgs.janetPackages.spork
-              pkgs.janetPackages.posix-spawn
               pkgs.janetPackages.sh
             ];
           })

@@ -18,8 +18,11 @@ stdenv.mkDerivation {
   buildPhase = ''
     set -o xtrace
     HOME=$(mktemp -d)  # Needed for the git config command below to work.
+    # There is no way currently to access the transitive closure of all
+    # dependent janet packages.  So, for now, just consider any directory to be
+    # safe.
+    git config --global --add safe.directory '*'
     ${lib.strings.concatMapStrings (x: lib.strings.concatStrings [
-      "git config --global --add safe.directory " (toString x.package) "/.git\n"
       "jpm -l install file://" (toString x.package) "/\n"
     ]) withJanetPackages}
 
