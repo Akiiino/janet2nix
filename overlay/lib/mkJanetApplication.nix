@@ -4,6 +4,7 @@
   pkgs,
   name,
   src,
+  buildInputs ? [],
   propagatedBuildInputs ? [],
   withJanetPackages ? []
 }:
@@ -15,13 +16,12 @@ let
 in
 
 stdenv.mkDerivation {
-  name = name;
-  src = src;
+  inherit name src;
   nativeBuildInputs = [
     janetEnv
     pkgs.makeWrapper
   ];
-  buildInputs = [
+  buildInputs = buildInputs ++ [
     janetEnv
     pkgs.makeWrapper
   ];

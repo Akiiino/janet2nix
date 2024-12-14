@@ -7,6 +7,7 @@
   url,
   hash ? null,
   rev ? null,
+  buildInputs ? [],
   withJanetPackages ? [],
   # This is a temporary hack to get judge installed with the "tag" style of dependencies. 
   # TODO come up with an alternative method (probably bite the bullet and parse project.janet files and generate a nix file
@@ -14,7 +15,8 @@
 }:
 {
   package = stdenvNoCC.mkDerivation {
-    name = name;
+    inherit name;
+    propagatedBuildInputs = buildInputs;
     nativeBuildInputs = [
       pkgs.git
       pkgs.janet
@@ -23,6 +25,7 @@
     src = fetchGit {
       url = url;
       rev = rev;
+      submodules = true;
     };
     buildPhase = ''
       set -o xtrace

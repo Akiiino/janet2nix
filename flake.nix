@@ -12,13 +12,11 @@
         extra_packages
       ]; };
       janet2nix = pkgs.mkJanetApplication {
-          name = "janet2nix";
-          src = ./.;
-          withJanetPackages = [
-            pkgs.janetPackages.spork
-            pkgs.janetPackages.posix-spawn
-            pkgs.janetPackages.sh
-          ];
+        name = "janet2nix";
+        src = ./.;
+        withJanetPackages = with pkgs.janetPackages; [ spork posix-spawn sh jaylib ];
+        # TODO: figure out how to make this unnecessary.
+        buildInputs = with pkgs; [ xorg.libXrandr ];
       };
     in {
       overlays = [
@@ -33,11 +31,8 @@
       devShells.default = pkgs.mkShell {
         packages = [
           (pkgs.mkJanetTree {
-            name="janet2nix-dev";
-            withJanetPackages = [
-              pkgs.janetPackages.spork
-              pkgs.janetPackages.sh
-            ];
+            name = "janet2nix-dev";
+            withJanetPackages = with pkgs.janetPackages; [ judge ];
           })
         ];
       };
