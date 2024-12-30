@@ -32,14 +32,14 @@ final: prev: {
       url = "https://github.com/ianthehenry/judge";
       rev = "a9db4af561f2bdcdc8dada35db7d8e8453262318";
       manualTag = "v2.4.0";
-      withJanetPackages = [ final.janetPackages.cmd ];
+      withJanetPackages = [final.janetPackages.cmd];
     };
     # TODO: get this working for a mkJanetApplication and add something to our main.janet to test that it keeps working.
     jaylib = prev.mkJanetPackage {
       name = "jaylib";
       url = "https://github.com/janet-lang/jaylib";
       rev = "4875309941972529777ef64555e73c600916e48f";
-      buildInputs = with prev; [ libGL glfw mesa xorg.libXi xorg.libXcursor xorg.libXrandr xorg.libXinerama ];
+      buildInputs = with prev; [libGL glfw mesa xorg.libXi xorg.libXcursor xorg.libXrandr xorg.libXinerama];
     };
   };
 }

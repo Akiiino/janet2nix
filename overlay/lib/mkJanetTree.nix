@@ -3,7 +3,7 @@
   pkgs,
   lib,
   name,
-  withJanetPackages
+  withJanetPackages,
 }:
 stdenv.mkDerivation {
   name = name;
@@ -22,9 +22,13 @@ stdenv.mkDerivation {
     # dependent janet packages.  So, for now, just consider any directory to be
     # safe.
     git config --global --add safe.directory '*'
-    ${lib.strings.concatMapStrings (x: lib.strings.concatStrings [
-      "jpm -l install file://" (toString x.package) "/\n"
-    ]) withJanetPackages}
+    ${lib.strings.concatMapStrings (x:
+      lib.strings.concatStrings [
+        "jpm -l install file://"
+        (toString x.package)
+        "/\n"
+      ])
+    withJanetPackages}
 
     echo '#!/bin/sh' > janet
     echo '${pkgs.janet}/bin/janet "$@"' >> janet
