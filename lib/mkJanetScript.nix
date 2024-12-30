@@ -1,11 +1,12 @@
-{ pkgs
-, stdenvNoCC
-, src
-, name
-, withJanetPackages ? []
-, propagatedBuildInputs ? []
-}:
-let
+{
+  pkgs,
+  stdenvNoCC,
+  src,
+  name,
+  mkJanetApplication,
+  withJanetPackages ? [],
+  propagatedBuildInputs ? [],
+}: let
   janetProject = builtins.toFile "project.janet" ''
     (declare-project :name "${name}" :dependencies [])
 
@@ -22,7 +23,8 @@ let
     '';
   };
 in
-(pkgs.mkJanetApplication {
-  inherit name propagatedBuildInputs withJanetPackages;
-  src = appSrc;
-}).overrideAttrs { inherit propagatedBuildInputs; }
+  (mkJanetApplication {
+    inherit name propagatedBuildInputs withJanetPackages;
+    src = appSrc;
+  })
+  .overrideAttrs {inherit propagatedBuildInputs;}
