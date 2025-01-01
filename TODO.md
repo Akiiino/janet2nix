@@ -1,4 +1,1 @@
-- Is there some way to for mkJanetPackage to refer to the revision of the git repo its running in?
-- Support janet programs with no dependencies.
 - Figure out if we should be doing something better with the libGL dependencies.
-- Maybe move url to withJanetPackages so that I can use different versions of the same package for different dependencies.

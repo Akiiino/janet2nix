@@ -1,45 +1,54 @@
 {
   lib,
-  fetchgit,
-  stdenvNoCC,
+  stdenv,
   pkgs,
   name,
-  url,
-  hash ? null,
-  rev ? null,
+  src,
   buildInputs ? [],
+  propagatedBuildInputs ? [],
   withJanetPackages ? [],
-  # This is a temporary hack to get judge installed with the "tag" style of dependencies.
-  # TODO come up with an alternative method (probably bite the bullet and parse project.janet files and generate a nix file
-  manualTag ? "v1",
-}: {
-  package = stdenvNoCC.mkDerivation {
-    inherit name;
-    propagatedBuildInputs = buildInputs;
+}: let
+  jpmTree = pkgs.symlinkJoin {
+    name = "jpm_tree";
+    paths = withJanetPackages;
+  };
+in
+  stdenv.mkDerivation {
+    inherit name src propagatedBuildInputs;
     nativeBuildInputs = [
       pkgs.git
       pkgs.janet
       pkgs.jpm
     ];
-    src = fetchGit {
-      url = url;
-      rev = rev;
-      submodules = true;
-    };
+    buildInputs = buildInputs ++ [jpmTree];
     buildPhase = ''
-        set -o xtrace
-        cat project.janet
-      ${lib.strings.concatMapStrings (x: lib.strings.concatStrings ["sed -E -i 's#" (lib.strings.escapeShellArg x.url) "(.git)?#file://" (lib.strings.escapeShellArg x.package) "#g' project.janet\n"]) withJanetPackages}
-        git init
-        git add .
-        git -c user.name='nix' -c user.email='nix@nix' commit -m "dummy commit"
-        git tag ${manualTag}
+      set -o xtrace
+
+      if [[ -d ${jpmTree}/jpm_tree ]]; then
+        cp -r ${jpmTree}/jpm_tree .
+        chmod +w -R jpm_tree
+      fi
+      jpm install -l --headerpath=${pkgs.janet}/include --libpath=${pkgs.janet}/lib
     '';
     installPhase = ''
-      mkdir -p $out/
-      cp -r . $out/
+      mkdir -p $out/bin
+      cp -r ./jpm_tree $out/
+      for file in $out/jpm_tree/bin/*; do
+        if isScript $file; then
+          # We support :hardcode-syspath like this:
+          # Any binary we built will have $(pwd)/jpm_tree. Replace the version
+          # in jpm_tree/bin with @syspath@/jpm_tree.  Copy all binaries in
+          # jpm_tree/bin (including those from our dependencies) to $out/bin
+          # replacing @syspath@ with our complete jpm_tree.
+          if [[ ! -L $file ]]; then
+            substituteInPlace $file --replace-quiet $(pwd)/jpm_tree @syspath@/jpm_tree
+          fi
+          dest=$out/bin/$(basename $file)
+          substitute $file $dest --replace-quiet @syspath@/jpm_tree $out/jpm_tree
+          chmod +x $dest
+        else
+          cp $file $out/bin/
+        fi
+      done
     '';
-  };
-  name = name;
-  url = url;
-}
+  }

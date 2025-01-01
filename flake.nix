@@ -11,20 +11,16 @@
       pkgs = nixpkgs.legacyPackages.${system};
       lib = import ./functions.nix pkgs;
       packages = import ./packages.nix {inherit pkgs lib;};
-      testApp = lib.mkJanetApplication {
+      testApp = lib.mkJanetPackage {
         name = "test";
         src = ./test;
-        withJanetPackages = with packages; [spork posix-spawn sh jaylib];
-        # TODO: figure out how to make this unnecessary.
-        buildInputs = with pkgs; [xorg.libXrandr];
+        withJanetPackages = with packages; [spork sh jaylib judge];
       };
       testScript = lib.mkJanetScript {
         name = "test";
-        src = pkgs.writeTextDir "./test.janet" ''
+        src = builtins.toFile "main.janet" ''
           (defn main [&] (print "hello world"))
         '';
-        # TODO: figure out how to make this unnecessary.
-        withJanetPackages = with packages; [sh];
       };
     in {
       inherit lib packages;

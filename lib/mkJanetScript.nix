@@ -3,28 +3,26 @@
   stdenvNoCC,
   src,
   name,
-  mkJanetApplication,
+  mkJanetPackage,
   withJanetPackages ? [],
-  propagatedBuildInputs ? [],
 }: let
   janetProject = builtins.toFile "project.janet" ''
     (declare-project :name "${name}" :dependencies [])
 
-    (declare-executable :name "${name}" :entry "${name}.janet" :install true)
+    (declare-executable :name "${name}" :entry "main.janet" :install true)
   '';
-  appSrc = stdenvNoCC.mkDerivation {
-    inherit src;
-    name = "${name}-src";
-    buildPhase = ''
-      cp ${janetProject} project.janet
-    '';
-    installPhase = ''
-      cp -r . $out
-    '';
-  };
 in
-  (mkJanetApplication {
-    inherit name propagatedBuildInputs withJanetPackages;
-    src = appSrc;
-  })
-  .overrideAttrs {inherit propagatedBuildInputs;}
+  mkJanetPackage {
+    inherit name withJanetPackages;
+    src = pkgs.runCommand "${name}-src" {} ''
+      if [[ -d ${src} ]]; then
+        cp -r ${src} $out
+        chmod +w -R $out
+      else
+        mkdir -p $out
+        cp ${src} $out/main.janet
+      fi
+
+      cp ${janetProject} $out/project.janet
+    '';
+  }
