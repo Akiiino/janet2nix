@@ -4,11 +4,12 @@
   pkgs,
   name,
   src,
+  mkJanetTree,
   buildInputs ? [],
   propagatedBuildInputs ? [],
   withJanetPackages ? [],
 }: let
-  janetEnv = pkgs.mkJanetTree {
+  janetEnv = mkJanetTree {
     name = lib.strings.concatStrings [name "-dev"];
     withJanetPackages = withJanetPackages;
   };

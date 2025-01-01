@@ -3,6 +3,7 @@
   stdenvNoCC,
   src,
   name,
+  mkJanetApplication,
   withJanetPackages ? [],
   propagatedBuildInputs ? [],
 }: let
@@ -22,7 +23,7 @@
     '';
   };
 in
-  (pkgs.mkJanetApplication {
+  (mkJanetApplication {
     inherit name propagatedBuildInputs withJanetPackages;
     src = appSrc;
   })
