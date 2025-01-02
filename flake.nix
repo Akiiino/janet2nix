@@ -11,23 +11,10 @@
       pkgs = nixpkgs.legacyPackages.${system};
       lib = import ./functions.nix pkgs;
       packages = import ./packages.nix {inherit pkgs lib;};
-      testApp = lib.mkJanetPackage {
-        name = "test";
-        src = ./test;
-        withJanetPackages = with packages; [spork sh jaylib judge];
-      };
-      testScript = lib.mkJanetScript {
-        name = "test";
-        src = builtins.toFile "main.janet" ''
-          (defn main [&] (print "hello world"))
-        '';
-      };
     in {
       inherit lib packages;
-      apps = builtins.mapAttrs (name: value: {
-        type = "app";
-        program = "${value}/bin/test";
-      }) {inherit testApp testScript;};
+
+      checks = import ./tests/all.nix {inherit self pkgs lib packages;};
 
       formatter = pkgs.alejandra;
     });

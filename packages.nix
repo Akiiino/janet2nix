@@ -47,5 +47,6 @@
       submodules = true;
     };
     propagatedBuildInputs = with pkgs; [glfw];
-  }).overrideAttrs {patches = [./patches/0001-jaylib-use-external-glfw.patch];};
+  })
+  .overrideAttrs {patches = [./patches/0001-jaylib-use-external-glfw.patch];};
 }

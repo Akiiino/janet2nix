@@ -4,7 +4,6 @@
   pkgs,
   name,
   src,
-  buildInputs ? [],
   propagatedBuildInputs ? [],
   withJanetPackages ? [],
 }: let
@@ -16,12 +15,10 @@ in
   stdenv.mkDerivation {
     inherit name src;
     propagatedBuildInputs = propagatedBuildInputs ++ [pkgs.janet];
-    nativeBuildInputs = [
-      pkgs.git
-      pkgs.janet
-      pkgs.jpm
-    ];
-    buildInputs = buildInputs ++ withJanetPackages;
+    # TODO: We probably need to allow the caller to add entries to both these
+    # lists, but I'm waiting until I have an example to support it.
+    nativeBuildInputs = [pkgs.jpm];
+    buildInputs = withJanetPackages;
     buildPhase = ''
       set -o xtrace
 
