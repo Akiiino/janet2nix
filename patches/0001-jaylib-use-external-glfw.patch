@@ -1,0 +1,33 @@
+--- a/project.janet	1969-12-31 16:00:01.000000000 -0800
++++ b/project.janet	2025-01-02 23:14:01.669634682 -0800
+@@ -8,19 +8,19 @@
+ 
+ (def cflags
+   (case o
+-    :macos '["-Iraylib/src" "-ObjC" "-Iraylib/src/external/glfw/include"]
++    :macos '["-Iraylib/src" "-ObjC"]
+     :windows ["-Iraylib/src" "-Iraylib/src/external/glfw/include" ]
+     # you might need to edit ./raylib/src/external/glfw/src/x11_init.c:1124
+     # to match /usr/X11R6/lib/libX11.so*
+     :openbsd '["-Iraylib/src" "-Iraylib/src/external/glfw/include" "-I/usr/X11R6/include" "-Du_char=unsigned char" "-Dalloca(x)=malloc(x)"]
+     #default
+-    '["-Iraylib/src" "-Iraylib/src/external/glfw/include"]))
++    '["-Iraylib/src"]))
+ 
+ (def lflags
+   (case o
+     :windows '["user32.lib" "gdi32.lib" "winmm.lib" "shell32.lib"]
+     :macos '["-lpthread" "-framework" "Cocoa" "-framework" "CoreVideo" "-framework" "IOKit" "-framework" "OpenGL"]
+-    :linux '["-lpthread" "-lX11"]
++    :linux '["-lpthread" "-lglfw"]
+     :openbsd '["-lpthread" "-lX11" "-L/usr/X11R6/lib"]
+     #default
+     '["-lpthread"]))
+@@ -42,7 +42,6 @@
+            "raylib/src/rcore.c"
+            "raylib/src/rmodels.c"
+            "raylib/src/raudio.c"
+-           "raylib/src/rglfw.c"
+            "raylib/src/rshapes.c"
+            "raylib/src/rtext.c"
+            "raylib/src/rtextures.c"

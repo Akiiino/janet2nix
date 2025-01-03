@@ -39,14 +39,13 @@
     };
     withJanetPackages = [cmd];
   };
-  jaylib = lib.mkJanetPackage {
+  jaylib = (lib.mkJanetPackage {
     name = "jaylib";
     src = fetchGit {
       url = "https://github.com/janet-lang/jaylib";
       rev = "4875309941972529777ef64555e73c600916e48f";
       submodules = true;
     };
-    buildInputs = with pkgs; [glfw mesa xorg.libXi xorg.libXcursor xorg.libXrandr xorg.libXinerama];
-    propagatedBuildInputs = with pkgs; [libGLU xorg.libX11];
-  };
+    propagatedBuildInputs = with pkgs; [glfw];
+  }).overrideAttrs {patches = [./patches/0001-jaylib-use-external-glfw.patch];};
 }
