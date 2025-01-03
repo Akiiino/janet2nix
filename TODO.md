@@ -1,3 +1,6 @@
+- Add documentation
+- Figure out how devShells are supposed to work.
+- Get jaylib to work on a binscript
 - Ensure names are consistent with how other languages are packaged in nix.
     - mkJanetPackage vs buildJanetPackage?
     - withJanetPackages vs dependencies?

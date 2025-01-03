@@ -122,26 +122,39 @@ with lib; let
       pkgs.runCommandLocal name {nativeBuildInputs = [p];}
       ''${p.name} | grep "SUCCESS" > $out'';
   });
+  jaylibDemo = ''
+    (use jaylib)
+
+    (defn main [& args]
+      (when ((os/environ) "DISPLAY")
+        (init-window 800 600 "Jaylib Demo")
+        (set-target-fps 60)
+        (while (not (window-should-close))
+          (begin-drawing)
+          (clear-background :black)
+          (draw-text "Hello World" 190 200 20 :white)
+          (end-drawing))
+        (close-window)))
+  '';
 in
   testsRun
   // {
-    jaylib-demo = mkJanetScript {
-      name = "jaylib-demo";
+    jaylib-demo-bin = mkJanetScript {
+      name = "jaylib-demo-bin";
       withJanetPackages = with packages; [jaylib];
-      src = toFile "main.janet" ''
-        (use jaylib)
-
-        (defn main [& args]
-          (when ((os/environ) "DISPLAY")
-            (init-window 800 600 "Jaylib Demo")
-            (set-target-fps 60)
-            (while (not (window-should-close))
-              (begin-drawing)
-              (clear-background :black)
-              (draw-text "Hello World" 190 200 20 :white)
-              (end-drawing))
-            (close-window)))
-      '';
+      src = toFile "main.janet" jaylibDemo;
+    };
+    # TODO: This doesn't run.
+    jaylib-demo-script = mkJanetPackage rec {
+      name = "jaylib-demo-script";
+      withJanetPackages = with packages; [jaylib];
+      src = mkSrc {
+        "project.janet" = ''
+          (declare-project :name "${name}" :dependencies [])
+          (declare-binscript :main "${name}")
+        '';
+        "${name}" = "#!/usr/bin/env janet\n${jaylibDemo}";
+      };
     };
     conflictingDep = let
       # This currently resolves the conflict by arbitrarily picking one.
