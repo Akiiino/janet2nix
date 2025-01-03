@@ -14,13 +14,14 @@
   };
 in
   stdenv.mkDerivation {
-    inherit name src propagatedBuildInputs;
+    inherit name src;
+    propagatedBuildInputs = propagatedBuildInputs ++ [pkgs.janet];
     nativeBuildInputs = [
       pkgs.git
       pkgs.janet
       pkgs.jpm
     ];
-    buildInputs = buildInputs ++ [jpmTree];
+    buildInputs = buildInputs ++ withJanetPackages;
     buildPhase = ''
       set -o xtrace
 
